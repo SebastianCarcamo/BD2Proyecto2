@@ -31,6 +31,25 @@ def gen_term_freq(word_array):
             
     
 
+def generate_tf_fd(obj_arr):
+    # General empy word -> tf_idf matrix
+    column_names = ["word"] + [str(o.id) for o in obj_arr]
+    df = pd.DataFrame(0, index = np.arange(len(obj_arr)), columns = column_names)
+
+    # Get document frequency matrix
+    freq_df = gen_doc_freq(obj_arr)
+
+    # Iterate over each doc and assign values
+    for obj in obj_arr: 
+        current_index = str(obj.id)
+        term_freq_df = gen_term_freq(obj.wordList)
+
+        for word in term_freq_df["word"]:
+            tf = calc_tf(term_freq_df[term_freq_df["word"] == word, "freq"])
+            data_dict["word"][current_index] = tf
+            data_dict["word"]["doc_freq"] = freq_df[freq_df["word"] == word, "doc_freq"]
+    return df
+
 def generate_tf_idf(obj_arr):
     # General empy word -> tf_idf matrix
     column_names = ["word"] + [str(o.id) for o in obj_arr]
