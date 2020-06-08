@@ -13,10 +13,8 @@ class TweetContainer:
 		self.id = tweet["id"]
 		text = tweet["text"]
 		tknzr = TweetTokenizer(preserve_case=False,strip_handles=True, reduce_len=True)
-		self.tokenized = tknzr.tokenize(text)
-		self.filtered = [w for w in self.tokenized if not w in stop_words and w not in punctuation and w not in ["rt"]]
-		stemmed = []
-		for w in self.filtered:
-			stemmed.append(ss.stem(w))
-		
-		self.wordList = stemmed
+		tokenized = tknzr.tokenize(text)
+		filtered = [w for w in tokenized if not w in stop_words and w not in punctuation and w not in ["rt"]]
+		self.wordList = []
+		for w in filtered:
+			self.wordList.append(ss.stem(w))
