@@ -10,8 +10,8 @@ ss = SnowballStemmer('spanish')
 
 class TweetContainer:
 	def __init__(self,tweet):
-		self.id = tweet["id"]
-		text = tweet["text"]
+		self.id = tweet[0]
+		text = tweet[2]
 		tknzr = TweetTokenizer(preserve_case=False,strip_handles=True, reduce_len=True)
 		tokenized = tknzr.tokenize(text)
 		filtered = [w for w in tokenized if not w in stop_words and w not in punctuation and w not in ["rt"]]
