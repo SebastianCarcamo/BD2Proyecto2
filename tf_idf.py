@@ -34,11 +34,8 @@ def gen_term_freq(word_array):
 
 def generate_tf_fd(obj_arr):
     # General empy word -> tf_idf matrix
-    column_names = ["word"] + [str(o.id) for o in obj_arr]
+    column_names = ["word", "frequencies"]
     df = pd.DataFrame(columns = column_names)
-
-    # Get document frequency matrix
-    freq_df = gen_doc_freq(obj_arr)
 
     # Iterate over each doc and assign values
     for obj in obj_arr: 
@@ -46,25 +43,24 @@ def generate_tf_fd(obj_arr):
         term_freq_df = gen_term_freq(obj.wordList)
         word_series = term_freq_df["word"]
 
-        for word in word_series:
-            freq = term_freq_df[term_freq_df["word"] == word]["freq"].values
-            tf = calc_tf(freq[0])
-            word_freq = freq_df[freq_df["word"] == word]["doc_freq"].values[0]
+        for i, r in term_freq_df.iterrows():
+            current_word = r["word"]
+            current_freq = r["freq"]
 
-            # If already in df update value for a given doc
             if word in df["word"].values:
-
-                df.loc[df["word"] == word, current_index] = tf
-                df.loc[df["word"] == word, "doc_freq"] = word_freq
-                continue
+               freq_dict = df.loc[df["word"] == word, "frequencies"] 
+               freq_dict[current_index] = current_freq
+               df.loc[df["word"] == word, "frequencies"] = freq_dict
+               continue
             data_dict = {}
+            freq_dict = {}
+
+            freq_dict[curret_index] = current_freq
             data_dict["word"] = word
-            data_dict[current_index] = tf
-            data_dict["doc_freq"] = word_freq
+            data_dict["frequencies"] = freq_dict
             new_row_df = pd.DataFrame(data_dict, index = [0])
             df = df.append(data_dict, ignore_index = True)
-
-    return df.fillna(0)
+    return df
 
 def generate_tf_idf(obj_arr):
     # General empy word -> tf_idf matrix
