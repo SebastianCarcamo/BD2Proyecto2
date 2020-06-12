@@ -4,8 +4,7 @@ import numpy as np
 def gen_doc_freq(obj_arr):
     column_names = ["word", "doc_freq"]
 
-    df = pd.DataFrame(columns = column_names)
-
+    df = pd.DataFrame(columns = column_names) 
     for obj in obj_arr: 
         current_index = obj.id 
         for word in set(obj.wordList):
@@ -96,11 +95,4 @@ def generate_tf_idf(obj_arr):
             df = df.append(data_dict, ignore_index = True)
     return df.fillna(0)
 
-def calc_tf(freq):
-    if freq <= 0:
-        return 0
-    else:
-        return 1 + np.log10(freq)
 
-def calc_idf(freq, n):
-    return np.log10(n/freq)
