@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+
+body {
+	margin: 0;
+	background: #2F2F33;
+}
+
+.wrapper {
+	width:	800px;
+	height: 100vh;
+	margin: auto;
+	box-sizing: border-box;
+}
+
+
+.title {
+	width: 445px;
+	margin: auto;
+	margin-top: 100px;
+	padding: 15px;
+	font-size: 70px;
+	font-family: "Didot";
+	font-weight: bold;
+	color: #EBEBEB;
+	box-sizing: border-box;
+}
+
+.search-space{
+	width: 95%;
+	margin: 0 auto;
+	padding: 15px;
+	border-radius: 20px;
+	box-sizing: border-box;
+}
+
+.search-bar {
+	width: 100%;
+	border: 0;
+	padding: 10px 15px;
+	font-size: 20px;
+	color: #444;
+	border-radius: 20px;
+	box-sizing: border-box;
+}
+
+.go-button {
+	display: inline-block;
+	width: 80;
+	
+	margin: auto;
+	background: #EBEBEB;
+}
+
+</style>
+
+<head>
+	<title>BuscaTweets</title>
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="title">
+			BuscaTweets
+		</div>
+
+		<div class="search-space">
+			<input class="search-bar" placeholder="Ingresa tus terminos de busqueda...">
+			<div class="go-button">Go</div>
+		</div>
+	</div>
+</body>
+
+</html>
