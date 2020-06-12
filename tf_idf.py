@@ -78,6 +78,3 @@ def calc_tf(freq):
 
 def calc_idf(freq, n):
     return np.log10(n/freq)
-
-def writeDFtoDisk(DF, name):
-    DF.to_csv(name ,index = False)
