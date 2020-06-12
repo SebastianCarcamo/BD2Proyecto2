@@ -27,8 +27,6 @@ def gen_term_freq(word_array):
         data_dict = {}
         data_dict["word"] = w
         data_dict["freq"] = tf_w
-        new_row_df = pd.DataFrame(data_dict, index = [0])
-        df = df.append(data_dict, ignore_index = True)
     return df
             
     
@@ -36,7 +34,7 @@ def gen_term_freq(word_array):
 def generate_tf_fd(obj_arr):
     # General empy word -> tf_idf matrix
     column_names = ["word"] + [str(o.id) for o in obj_arr]
-    df = pd.DataFrame(columns = column_names)
+    df = pd.DataFrame(0, index = np.arange(len(obj_arr)), columns = column_names)
 
     # Get document frequency matrix
     freq_df = gen_doc_freq(obj_arr)
@@ -45,32 +43,17 @@ def generate_tf_fd(obj_arr):
     for obj in obj_arr: 
         current_index = str(obj.id)
         term_freq_df = gen_term_freq(obj.wordList)
-        word_series = term_freq_df["word"]
 
-        for word in word_series:
-            freq = term_freq_df[term_freq_df["word"] == word]["freq"].values
-            tf = calc_tf(freq[0])
-            word_freq = freq_df[freq_df["word"] == word]["doc_freq"].values[0]
-
-            # If already in df update value for a given doc
-            if word in df["word"].values:
-
-                df.loc[df["word"] == word, current_index] = tf
-                df.loc[df["word"] == word, "doc_freq"] = word_freq
-                continue
-            data_dict = {}
-            data_dict["word"] = word
-            data_dict[current_index] = tf
-            data_dict["doc_freq"] = word_freq
-            new_row_df = pd.DataFrame(data_dict, index = [0])
-            df = df.append(data_dict, ignore_index = True)
-
-    return df.fillna(0)
+        for word in term_freq_df["word"]:
+            tf = calc_tf(term_freq_df[term_freq_df["word"] == word, "freq"])
+            data_dict["word"][current_index] = tf
+            data_dict["word"]["doc_freq"] = freq_df[freq_df["word"] == word, "doc_freq"]
+    return df
 
 def generate_tf_idf(obj_arr):
     # General empy word -> tf_idf matrix
     column_names = ["word"] + [str(o.id) for o in obj_arr]
-    df = pd.DataFrame(columns = column_names)
+    df = pd.DataFrame(0, index = np.arange(len(obj_arr)), columns = column_names)
 
     # Get document frequency matrix
     freq_df = gen_doc_freq(obj_arr)
@@ -79,22 +62,13 @@ def generate_tf_idf(obj_arr):
     for obj in obj_arr: 
         current_index = str(obj.id)
         term_freq_df = gen_term_freq(obj.wordList)
-        word_series = term_freq_df["word"]
 
-        for word in word_series.values:
-            tf = calc_tf(term_freq_df[term_freq_df["word"] == word]["freq"].values[0])
-            idf = calc_idf(len(obj_arr) , freq_df[freq_df["word"] == word]["doc_freq"].values[0])
+        for word in term_freq_df["word"]:
+            tf = calc_tf(term_freq_df[term_freq_df["word"] == word, "freq"])
+            idf = calc_idf(len(obj_arr) , freq_df[freq_df["word"] == word, "doc_freq"])
             tf_idf =  tf * idf
-            # If already in df just update tf_idf value
-            if word in df["word"].values:
-                df.loc[df["word"] == word, "tf_idf"] = tf_idf
-                continue
-            data_dict = {}
-            data_dict["word"] = word
-            data_dict[current_index] = tf_idf
-            new_row_df = pd.DataFrame(data_dict, index = [0])
-            df = df.append(data_dict, ignore_index = True)
-    return df.fillna(0)
+            data_dict["word"][current_index] = tf_idf
+    return df
 
 def calc_tf(freq):
     if freq <= 0:
@@ -104,3 +78,6 @@ def calc_tf(freq):
 
 def calc_idf(freq, n):
     return np.log10(n/freq)
+
+def writeDFtoDisk(DF, name):
+    DF.to_csv(name ,index = False)

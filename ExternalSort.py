@@ -34,5 +34,5 @@ class Handler(object):
 		for elem in chunk.values:
 			obj_list.append(TweetContainer(elem))
 		chunkName = 'chunk' + str(cnt) + 'tf_df' + '.csv'
-		print(generate_tf_fd(obj_list))
+		print(generate_tf_fd(obj_list)).sort_values(by=[0])
 		cnt+=1
