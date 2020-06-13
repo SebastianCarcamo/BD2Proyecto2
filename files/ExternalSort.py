@@ -3,6 +3,8 @@ import sys
 import os
 import json
 import csv
+import heapq
+import ast
 
 from files.TweetContainer import TweetContainer
 from files.utils import *
@@ -44,7 +46,7 @@ class Handler:
 		class TableClass:
 			def __init__(self, tableName):
 				self.name = tableName
-				self.sizeOfChunk = ORDERED_SIZE
+				self.sizeOfChunk = SORTED_CHUNK
 				self.last = False
 				self.empty = False
 				self.iteration = 0
@@ -59,14 +61,9 @@ class Handler:
 
 			def updateList(self):
 				self.iteration += 1
-				if(self.iteration*self.sizeOfChunk<self.size):
-					skip = self.iteration*self.sizeOfChunk
-				elif(self.iteration*self.sizeOfChunk == self.size):
-					skip = self.iteration*self.sizeOfChunk
+				if((self.iteration+1)*self.sizeOfChunk-1 >= self.size):
 					self.last = True
-				else:
-					skip = self.size - (self.iteration-1)*self.sizeOfChunk
-					self.last = True
+				skip = self.iteration * self.sizeOfChunk
 				self.orderedList = (pd.read_csv(self.name,skiprows = skip, nrows = self.sizeOfChunk)).values.tolist()
 
 			def popFirst(self):
@@ -86,11 +83,12 @@ class Handler:
 		while(len(tableClasses) > 0):
 			tmp = []
 			tmp = tableClasses[0].popFirst()
+			tmp[1] = ast.literal_eval(tmp[1])
 			heapq.heapify(tableClasses)
 			while(tableClasses[0].getFirst() == tmp[0]):
-				tmp[1].update(tableClasses.popFirst()[1])
+				tmp[1].update(ast.literal_eval(tableClasses[0].popFirst()[1]))
 				heapq.heapify(tableClasses)
-			writeLine(PATH + "merged.csv",tmp)
+			self.writeLine(PATH + "merged.csv",tmp)
 			if(tableClasses[0].empty == True):
 				tableClasses.pop(0)
 			heapq.heapify(tableClasses)
