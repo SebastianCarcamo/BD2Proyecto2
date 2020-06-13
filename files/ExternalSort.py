@@ -39,6 +39,9 @@ class Handler(object):
 			write.writerow(lista)
 
 
+	def mergeDict(dict1, dict2): 
+    	return dict1.update(dict2)
+
 	def mergeTables():
 		class TableClass:
 			def __init__(self, tableName):
@@ -83,7 +86,14 @@ class Handler(object):
 
 		heapq.heapify(tableClasses)
 		while(len(tableClasses) > 0):
-			writeLine("merged.csv",(tableClasses[0]).popFirst())
+			tmp = []
+			tmp = tableClasses[0].popFirst()
+			heapq.heapify(tableClasses)
+			while(tableClasses[0].getFirst() == tmp[0]):
+				tmp[1].update(tableClasses.popFirst()[1])
+				heapq.heapify(tableClasses)
+
+			writeLine("merged.csv",tmp)
 			if(tableClasses[0].empty == True):
 				tableClasses.pop(0)
 			heapq.heapify(tableClasses)
