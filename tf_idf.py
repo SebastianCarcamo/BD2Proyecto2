@@ -1,3 +1,4 @@
+from calc_utils import *
 import pandas as pd
 import numpy as np
 
@@ -36,7 +37,6 @@ def generate_tf_fd(obj_arr):
     # General empy word -> tf_idf matrix
     column_names = ["word", "frequencies"]
     df = pd.DataFrame(columns = column_names)
-
     # Iterate over each doc and assign values
     for obj in obj_arr: 
         current_index = str(obj.id)
@@ -47,16 +47,16 @@ def generate_tf_fd(obj_arr):
             current_word = r["word"]
             current_freq = r["freq"]
 
-            if word in df["word"].values:
-               freq_dict = df.loc[df["word"] == word, "frequencies"] 
+            if current_word in df["word"].values:
+               freq_dict = df.loc[df["word"] == current_word, "frequencies"] 
                freq_dict[current_index] = current_freq
-               df.loc[df["word"] == word, "frequencies"] = freq_dict
+               df.loc[df["word"] == current_word, "frequencies"] = freq_dict
                continue
             data_dict = {}
             freq_dict = {}
 
-            freq_dict[curret_index] = current_freq
-            data_dict["word"] = word
+            freq_dict[current_index] = current_freq
+            data_dict["word"] = current_word
             data_dict["frequencies"] = freq_dict
             new_row_df = pd.DataFrame(data_dict, index = [0])
             df = df.append(data_dict, ignore_index = True)
