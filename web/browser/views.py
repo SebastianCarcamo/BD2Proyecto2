@@ -2,6 +2,7 @@ from django.views.decorators.http import require_http_methods
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.template import Context, loader
+from files.utils import get_n_most_similar
 
 # Create your views here.
 
@@ -12,5 +13,6 @@ def index(request):
 
 @require_http_methods(["POST"])
 def search(request):
-	tweets = ['1271515272575430656', '1271496282016751617']
-	return JsonResponse({'tweets': tweets})
+	search_terms = request.POST.get('searchTerms')
+	tweets = get_n_most_similar(search_terms, 10)
+	return JsonResponse({'tweets': [x[1] for x in tweets]})
