@@ -1,3 +1,4 @@
+from calc_utils import *
 import pandas as pd
 import numpy as np
 
@@ -38,7 +39,7 @@ def generate_tf_fd(obj_arr):
     df = pd.DataFrame(columns = column_names)
 
     # Get document frequency matrix
-    freq_df = gen_doc_freq(obj_arr)
+	#freq_df = gen_doc_freq(obj_arr)
 
     # Iterate over each doc and assign values
     for obj in obj_arr: 
@@ -49,18 +50,18 @@ def generate_tf_fd(obj_arr):
         for word in word_series:
             freq = term_freq_df[term_freq_df["word"] == word]["freq"].values
             tf = calc_tf(freq[0])
-            word_freq = freq_df[freq_df["word"] == word]["doc_freq"].values[0]
+			#word_freq = freq_df[freq_df["word"] == word]["doc_freq"].values[0]
 
             # If already in df update value for a given doc
             if word in df["word"].values:
 
                 df.loc[df["word"] == word, current_index] = tf
-                df.loc[df["word"] == word, "doc_freq"] = word_freq
+				#df.loc[df["word"] == word, "doc_freq"] = word_freq
                 continue
             data_dict = {}
             data_dict["word"] = word
             data_dict[current_index] = tf
-            data_dict["doc_freq"] = word_freq
+			#data_dict["doc_freq"] = word_freq
             new_row_df = pd.DataFrame(data_dict, index = [0])
             df = df.append(data_dict, ignore_index = True)
 

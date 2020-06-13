@@ -3,47 +3,48 @@ import sys
 import os
 import json
 import csv
-from TweetContainer import * 
+
+from files.TweetContainer import TweetContainer
+from files.utils import *
 from tf_idf import *
 
+PATH = './store/'
 
-class Handler(object):
+class Handler:
 	def __init__(self):
 		self.names = []
 		for i in os.listdir("./clean/"):
 			if i.endswith('.json'):
-				names.append("./clean/" + i)
+				self.names.append("./clean/" + i)
 
-	def jsonToCsv():
-		for i in names:
+	def jsonToCsv(self):
+		for i in self.names:
 			with open(i, encoding = 'utf-8') as reader:
 				df = pd.read_json(reader)
 
-			df.to_csv("tweets.csv",encoding='utf-8', index = False, header = False, mode = 'a')
+			df.to_csv(PATH + "tweets.csv",encoding='utf-8', index = False, header = False, mode = 'a')
 
-	def processChunks(filename):
-		chunks = pd.read_csv("tweets.csv", chunksize = 100, names = ["tweetId","date","text","user_id","user_name","location","retweeted","RT_text","RT_user_id","RT_user_name"], header = None)
+	def processChunks(self):
+		chunks = pd.read_csv(PATH + "tweets.csv", chunksize = CHUNK_SIZE, names = ["tweetId","date","text","user_id","user_name","location","retweeted","RT_text","RT_user_id","RT_user_name"], header = None)
 
-		cnt = 1
-		for chunk in chunks:
+		for cnt, chunk in enumerate(chunks):
 			obj_list = []
 			for elem in chunk.values:
 				obj_list.append(TweetContainer(elem))
-			chunkName = 'chunk' + str(cnt) + 'tf_df' + '.csv'
-			(generate_tf_fd(obj_list).sort_values(by=['word'])).to_csv(chunkName,index = False, encoding = 'utf-8')
-			cnt+=1
+			chunkName = 'chunks/' + str(cnt) + 'tf_df' + '.csv'
+			(generate_tf_fd(obj_list).sort_values(by=['word'])).to_csv(PATH + chunkName,index = False, encoding = 'utf-8')
 
-	def writeLine(name,lista): 
+	def writeLine(self, name, lista): 
 		with open(name,'a+') as f:
 			write = csv.writer(f)
 			write.writerow(lista)
 
 
-	def mergeTables():
+	def mergeTables(self):
 		class TableClass:
 			def __init__(self, tableName):
 				self.name = tableName
-				self.sizeOfChunk = 10
+				self.sizeOfChunk = 20
 				self.last = False
 				self.empty = False
 				self.iteration = 0
@@ -77,13 +78,13 @@ class Handler(object):
 				return value
 
 		tableClasses = []
-		for i in os.listdir("../docs"):
+		for i in os.listdir(PATH + 'chunks'):
 			if i.endswith('tf_df.csv'):
-				tableClasses.append(TableClass("../docs/" + i))
+				tableClasses.append(TableClass(PATH + 'chunks/'+ i))
 
 		heapq.heapify(tableClasses)
 		while(len(tableClasses) > 0):
-			writeLine("merged.csv",(tableClasses[0]).popFirst())
+			writeLine(PATH + "merged.csv",(tableClasses[0]).popFirst())
 			if(tableClasses[0].empty == True):
 				tableClasses.pop(0)
 			heapq.heapify(tableClasses)
