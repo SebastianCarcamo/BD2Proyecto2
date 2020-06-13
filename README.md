@@ -9,6 +9,8 @@ We first process each Tweet independently in order to tokenize and remove stop w
 
 ## TFIDF Scoring
 
+We calculate the IDF for documents along with their TF. This is done along the splitting of chunks and is concatenated with each of them. Finally, with the master data, we can make queries. When a query is passed it is interpreted as a document and the corresponding TF-IDF is calculated for each word. Then we find the documents for which this words are not 0. That means, there will be a comparison bigger than 0, and calculate the TF_IDF of the data vectors. Finally we calculate the cosine similarity for the vector in the query and the vector in each of the to be evaluated documents and sort them.
+
 
 ## Web Browser
 
