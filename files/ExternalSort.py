@@ -44,7 +44,7 @@ class Handler:
 		class TableClass:
 			def __init__(self, tableName):
 				self.name = tableName
-				self.sizeOfChunk = 20
+				self.sizeOfChunk = ORDERED_SIZE
 				self.last = False
 				self.empty = False
 				self.iteration = 0
